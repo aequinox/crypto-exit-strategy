@@ -1,6 +1,6 @@
 # Crypto Market Monitor
 
-A Python tool that monitors cryptocurrency market conditions and sends email alerts based on configurable thresholds and market indicators.
+A Python tool that monitors cryptocurrency market conditions and sends email alerts based on configurable thresholds and market indicators. Now with beautiful Seaborn charts showing historical data for all tracked indicators!
 
 ## Features
 
@@ -10,6 +10,8 @@ A Python tool that monitors cryptocurrency market conditions and sends email ale
 - **Social Media & App Store Trend Analysis**: Monitors Google Trends and App Store rankings for crypto hype
 - **Fear & Greed Index Integration**: Incorporates market sentiment analysis
 - **Email Alerts**: Sends customized email notifications for different market conditions
+- **Historical Charts**: Includes beautiful Seaborn charts of historical indicator data in email alerts
+- **Historical Data Tracking**: Automatically tracks and stores historical data for all indicators
 
 ## Prerequisites
 
