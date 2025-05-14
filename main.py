@@ -264,13 +264,20 @@ def send_email(
         msg["Subject"] = subject
     else:
         # Create multipart message for real emails with charts
-        msg = MIMEMultipart("related")
+        msg = MIMEMultipart()
         msg["From"] = C.EMAIL_ADDRESS
         msg["To"] = C.EMAIL_ADDRESS
         msg["Subject"] = subject
 
         # If we have charts, create HTML email with embedded images
         if charts:
+            # Create the alternative part for both plain text and HTML
+            alt_part = MIMEMultipart("alternative")
+
+            # Add plain text version first (fallback)
+            plain_part = MIMEText(body, "plain")
+            alt_part.attach(plain_part)
+
             # Start HTML content
             html_content = f"""
             <html>
@@ -294,7 +301,7 @@ def send_email(
                     <h2>Market Indicators - Historical Charts</h2>
             """
 
-            # Add each chart
+            # Add each chart to HTML content
             for chart_id, chart_data in charts.items():
                 # Create a unique content ID for this image
                 content_id = f"{chart_id.lower().replace(' ', '_')}"
@@ -307,14 +314,6 @@ def send_email(
                     </div>
                 """
 
-                # Create image attachment with content ID
-                img = MIMEImage(chart_data.getvalue())
-                img.add_header("Content-ID", f"<{content_id}>")
-                img.add_header(
-                    "Content-Disposition", "inline", filename=f"{content_id}.png"
-                )
-                msg.attach(img)
-
             # Close HTML
             html_content += """
                 </div>
@@ -322,8 +321,22 @@ def send_email(
             </html>
             """
 
-            # Attach HTML content
-            msg.attach(MIMEText(html_content, "html"))
+            # Attach HTML content to the alternative part
+            html_part = MIMEText(html_content, "html")
+            alt_part.attach(html_part)
+
+            # Attach the alternative part to the main message
+            msg.attach(alt_part)
+
+            # Now attach all images with proper Content-IDs
+            for chart_id, chart_data in charts.items():
+                content_id = f"{chart_id.lower().replace(' ', '_')}"
+                img = MIMEImage(chart_data.getvalue())
+                img.add_header("Content-ID", f"<{content_id}>")
+                img.add_header(
+                    "Content-Disposition", "inline", filename=f"{content_id}.png"
+                )
+                msg.attach(img)
         else:
             # Plain text email
             msg.attach(MIMEText(body, "plain"))
