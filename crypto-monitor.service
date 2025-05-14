@@ -1,0 +1,12 @@
+[Unit]
+Description=Crypto Market Monitor Service
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Projects/Python/crypto
+ExecStart=/usr/bin/uv run %h/Projects/Python/crypto/main.py
+Environment="PATH=%h/.local/bin:/usr/bin"
+
+[Install]
+WantedBy=default.target
